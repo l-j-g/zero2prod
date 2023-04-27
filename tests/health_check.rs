@@ -1,10 +1,9 @@
 use actix_web::rt::spawn;
-use zero2prod::main;
 
 #[actix_rt::test]
 async fn health_check_works() {
     // Arrange
-    spawn_app().await.expect("Failed to spawn our app.");
+    spawn_app();
 
     let client = reqwest::Client::new();
 
@@ -21,5 +20,7 @@ async fn health_check_works() {
 
 // spawn_app is the only function that depends on our application code.
 async fn spawn_app() -> std::io::Result<()> {
-    zero2prod::run().await
+    let server = zero2prod.run().expect("Failed to bind address");
+
+    let _ = tokio::spawn(server);
 }
